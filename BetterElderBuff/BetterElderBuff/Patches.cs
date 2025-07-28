@@ -18,7 +18,7 @@ namespace BetterElderBuff
 
             StringBuilder stringBuilder = new StringBuilder(256);
 
-            stringBuilder.AppendFormat(BetterElderBuffPlugin.Tooltip.Value + '\n');
+            stringBuilder.AppendFormat(__instance.Translate("better_elder_tooltip") + '\n');
             stringBuilder.AppendFormat($"{__instance.Translate("inventory_chop")}: <color=orange>{(BetterElderBuffPlugin.DamageModifier.Value - 1) * 100f:+0;-0}%</color>\n");
 
             if (BetterElderBuffPlugin.GivePickaxeDamage.Value)

@@ -19,7 +19,6 @@ namespace BetterElderBuff
         public static ConfigEntry<float> DamageModifier;
         public static ConfigEntry<bool> GivePickaxeDamage;
         public static ConfigEntry<int> BonusCarryingCapacity;
-        public static ConfigEntry<string> Tooltip;
 
         protected void Awake()
         {
@@ -43,10 +42,6 @@ namespace BetterElderBuff
 
             BonusCarryingCapacity = Config.BindSynced(serverSyncInstance, sectionName, nameof(BonusCarryingCapacity), 100, "Amount of bonus carrying capacity while the buff is active. Values below 0 are not allowed and will be reset.");
             MaxCarryWeight_SettingChanged(null, null);
-
-            sectionName = "9 - Localization";
-
-            Tooltip = Config.Bind(sectionName, nameof(Tooltip), "Your ability to chop wood, mine and carry is improved.", string.Empty);
         }
 
         private void DamageModifier_SettingChanged(object sender, System.EventArgs e)
