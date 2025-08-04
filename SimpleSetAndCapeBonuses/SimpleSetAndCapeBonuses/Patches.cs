@@ -11,15 +11,15 @@ namespace SimpleSetAndCapeBonuses
     {
         [HarmonyPatch(nameof(Localization.Translate))]
         [HarmonyPostfix]
-        public static void Show_Postfix(string word, ref string __result)
+        public static void Show_Postfix(Localization __instance, string word, ref string __result)
         {
             if (word == PatchObjectDB.leatherSetBonus.ToLower())
             {
-                __result = LeatherArmorSetBonusLabel.Value;
+                __result = __instance.Translate("leather_set_bonus");
             }
             else if (word == PatchObjectDB.ragsSetBonus.ToLower())
             {
-                __result = ForagerSetBonusLabel.Value;
+                __result = __instance.Translate("forager_set_bonus");
             }
         }
     }
@@ -65,14 +65,14 @@ namespace SimpleSetAndCapeBonuses
             leatherSetBonusBuff.m_runStaminaDrainModifier = -0.15f;
             leatherSetBonusBuff.name = $"{leatherSetBonus}";
             leatherSetBonusBuff.m_name = $"${leatherSetBonus.ToLower()}";
-            leatherSetBonusBuff.m_tooltip = LeatherArmorSetBonusTooltip.Value;
+            leatherSetBonusBuff.m_tooltip = "$leather_set_bonus_description";
 
             __instance.m_StatusEffects.Add(leatherSetBonusBuff);
 
             var ragsSetBonusBuff = ScriptableObject.CreateInstance<StatusEffect>();
             ragsSetBonusBuff.name = $"{ragsSetBonus}";
             ragsSetBonusBuff.m_name = $"${ragsSetBonus.ToLower()}";
-            ragsSetBonusBuff.m_tooltip = ForagerSetBonusTooltip.Value;
+            ragsSetBonusBuff.m_tooltip = "$forager_set_bonus_description";
             ragsSetBonusHash = ragsSetBonusBuff.NameHash();
 
             __instance.m_StatusEffects.Add(ragsSetBonusBuff);

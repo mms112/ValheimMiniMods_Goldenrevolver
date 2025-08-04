@@ -2,14 +2,20 @@
 using BepInEx.Configuration;
 using HarmonyLib;
 using System.Reflection;
+using ServerSync;
 
 namespace SimpleSetAndCapeBonuses
 {
-    [BepInPlugin("goldenrevolver.SimpleSetAndCapeBonuses", NAME, VERSION)]
+    [BepInPlugin(GUID, NAME, VERSION)]
     public class SimpleSetAndCapeBonusesPlugin : BaseUnityPlugin
     {
+        public const string GUID = "goldenrevolver.SimpleSetAndCapeBonuses";
         public const string NAME = "Simple New Set and Cape Bonuses";
         public const string VERSION = "1.0.3";
+
+        internal static readonly ConfigSync configSync = new ConfigSync(GUID) { DisplayName = NAME, CurrentVersion = VERSION, MinimumRequiredVersion = VERSION };
+
+        private static ConfigEntry<bool> configLocked;
 
         public static ConfigEntry<bool> EnableLeatherArmorSetBonus;
         public static ConfigEntry<bool> EnableForagerArmorSetBonus;
@@ -21,11 +27,6 @@ namespace SimpleSetAndCapeBonuses
 
         public static ConfigEntry<bool> ForagerSetBonusUsesRandomness;
 
-        public static ConfigEntry<string> LeatherArmorSetBonusLabel;
-        public static ConfigEntry<string> LeatherArmorSetBonusTooltip;
-        public static ConfigEntry<string> ForagerSetBonusLabel;
-        public static ConfigEntry<string> ForagerSetBonusTooltip;
-
         protected void Awake()
         {
             LoadConfig();
@@ -35,26 +36,39 @@ namespace SimpleSetAndCapeBonuses
 
         private void LoadConfig()
         {
+            configLocked = config("General", "LockConfiguration", true, "Configuration is locked and can be changed by server admins only.");
+            configSync.AddLockingConfigEntry(configLocked);
+
             var sectionName = "0 - Requires Restart";
 
-            EnableTrollArmorSetBonusChange = Config.Bind(sectionName, nameof(EnableTrollArmorSetBonusChange), true, string.Empty);
-            EnableLeatherArmorSetBonus = Config.Bind(sectionName, nameof(EnableLeatherArmorSetBonus), true, string.Empty);
-            EnableForagerArmorSetBonus = Config.Bind(sectionName, nameof(EnableForagerArmorSetBonus), true, string.Empty);
-            EnableCapeBuffs = Config.Bind(sectionName, nameof(EnableCapeBuffs), true, string.Empty);
+            EnableTrollArmorSetBonusChange = config(sectionName, nameof(EnableTrollArmorSetBonusChange), true, "Removes the troll cape from the Troll Set.");
+            EnableLeatherArmorSetBonus = config(sectionName, nameof(EnableLeatherArmorSetBonus), true, "Enables the set bonus for the Leather Set.");
+            EnableForagerArmorSetBonus = config(sectionName, nameof(EnableForagerArmorSetBonus), true, "Enables the set bonus for the Rag Set.");
+            EnableCapeBuffs = config(sectionName, nameof(EnableCapeBuffs), true, "Enables additional buffs for some capes.");
 
-            EnableSetBonusIcons = Config.Bind(sectionName, nameof(EnableSetBonusIcons), true, string.Empty);
-            AlwaysEnableMidsummerCrownRecipe = Config.Bind(sectionName, nameof(AlwaysEnableMidsummerCrownRecipe), true, string.Empty);
+            EnableSetBonusIcons = config(sectionName, nameof(EnableSetBonusIcons), true, "Enables icons for the new set boni.", false);
+            AlwaysEnableMidsummerCrownRecipe = config(sectionName, nameof(AlwaysEnableMidsummerCrownRecipe), true, "Enables the midsummer crown in all seasons.");
 
             sectionName = "1 - No Restart Required";
 
-            ForagerSetBonusUsesRandomness = Config.Bind(sectionName, nameof(ForagerSetBonusUsesRandomness), true, "Whether Forager always grants 1 more item, or 0 to 2 with an average of 1.");
-
-            sectionName = "9 - Localization";
-
-            LeatherArmorSetBonusLabel = Config.Bind(sectionName, nameof(LeatherArmorSetBonusLabel), "Quick Feet", string.Empty);
-            LeatherArmorSetBonusTooltip = Config.Bind(sectionName, nameof(LeatherArmorSetBonusTooltip), "Your legs carry you faster and further.", string.Empty);
-            ForagerSetBonusLabel = Config.Bind(sectionName, nameof(ForagerSetBonusLabel), "Forager", string.Empty);
-            ForagerSetBonusTooltip = Config.Bind(sectionName, nameof(ForagerSetBonusTooltip), "Your foraging skills are improved.", string.Empty);
+            ForagerSetBonusUsesRandomness = config(sectionName, nameof(ForagerSetBonusUsesRandomness), true, "Whether Forager always grants 1 more item, or randomly 0 to 1.");
         }
+
+        ConfigEntry<T> config<T>(string group, string name, T defaultValue, ConfigDescription description, bool synchronizedSetting = true)
+        {
+            ConfigDescription extendedDescription = new ConfigDescription(
+                description.Description +
+                (synchronizedSetting ? " [Synced with Server]" : " [Not Synced with Server]"),
+                description.AcceptableValues, description.Tags);
+
+            ConfigEntry<T> configEntry = Config.Bind(group, name, defaultValue, extendedDescription);
+
+            SyncedConfigEntry<T> syncedConfigEntry = configSync.AddConfigEntry(configEntry);
+            syncedConfigEntry.SynchronizedConfig = synchronizedSetting;
+
+            return configEntry;
+        }
+
+        ConfigEntry<T> config<T>(string group, string name, T defaultValue, string description, bool synchronizedSetting = true) => config(group, name, defaultValue, new ConfigDescription(description), synchronizedSetting);
     }
 }
