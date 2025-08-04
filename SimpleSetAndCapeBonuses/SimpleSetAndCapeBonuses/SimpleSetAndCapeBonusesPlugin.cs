@@ -25,7 +25,7 @@ namespace SimpleSetAndCapeBonuses
         public static ConfigEntry<bool> EnableSetBonusIcons;
         public static ConfigEntry<bool> AlwaysEnableMidsummerCrownRecipe;
 
-        public static ConfigEntry<bool> ForagerSetBonusUsesRandomness;
+        public static ConfigEntry<float> ForagerSetBonusExtraChance;
 
         protected void Awake()
         {
@@ -51,7 +51,7 @@ namespace SimpleSetAndCapeBonuses
 
             sectionName = "1 - No Restart Required";
 
-            ForagerSetBonusUsesRandomness = config(sectionName, nameof(ForagerSetBonusUsesRandomness), true, "Whether Forager always grants 1 more item, or randomly 0 to 1.");
+            ForagerSetBonusExtraChance = config(sectionName, nameof(ForagerSetBonusExtraChance), 0.5f, "The change of Forager granting an extra item.");
         }
 
         ConfigEntry<T> config<T>(string group, string name, T defaultValue, ConfigDescription description, bool synchronizedSetting = true)

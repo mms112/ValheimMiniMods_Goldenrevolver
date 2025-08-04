@@ -34,14 +34,8 @@ namespace SimpleSetAndCapeBonuses
 
             if (IsForage(__instance))
             {
-                if (SimpleSetAndCapeBonusesPlugin.ForagerSetBonusUsesRandomness.Value)
-                {
-                    __instance.m_amount += UnityEngine.Random.Range(0, 2);
-                }
-                else
-                {
+                if (UnityEngine.Random.Range(0f, 1f) <= SimpleSetAndCapeBonusesPlugin.ForagerSetBonusExtraChance.Value)
                     __instance.m_amount += 1;
-                }
             }
         }
 
