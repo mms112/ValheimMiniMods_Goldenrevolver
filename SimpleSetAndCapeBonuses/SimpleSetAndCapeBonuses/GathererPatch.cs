@@ -1,48 +1,50 @@
-﻿using HarmonyLib;
+﻿using System;
+using HarmonyLib;
+using UnityEngine;
 
 namespace SimpleSetAndCapeBonuses
 {
     [HarmonyPatch]
     internal class GathererPatch
     {
-        [HarmonyPatch(typeof(Pickable), nameof(Pickable.RPC_Pick))]
-        public static void Prefix(Pickable __instance, long sender, ref int __state)
+        static bool injectBonus = false;
+
+        [HarmonyPatch(typeof(Pickable), nameof(Pickable.Interact))]
+        public static void Prefix(Pickable __instance, Humanoid character)
         {
-            __state = __instance.m_amount;
-
-            if (!__instance.m_nview.IsOwner())
-            {
-                return;
-            }
-
             if (__instance.m_picked)
             {
                 return;
             }
 
-            Player player = Player.GetPlayer(sender);
-
-            if (player == null)
-            {
-                player = Player.m_localPlayer;
-            }
-
-            if (player == null || !player.m_seman.HaveStatusEffect(PatchObjectDB.ragsSetBonusHash))
+            if (!character.m_seman.HaveStatusEffect(PatchObjectDB.ragsSetBonusHash))
             {
                 return;
             }
 
             if (IsForage(__instance))
             {
-                if (UnityEngine.Random.Range(0f, 1f) <= SimpleSetAndCapeBonusesPlugin.ForagerSetBonusExtraChance.Value)
-                    __instance.m_amount += 1;
+                if (SimpleSetAndCapeBonusesPlugin.ForagerSetBonusExtraChance.Value >= 1f || UnityEngine.Random.value < SimpleSetAndCapeBonusesPlugin.ForagerSetBonusExtraChance.Value)
+                {
+                    injectBonus = true;
+                    DamageText.instance.ShowText(DamageText.TextType.Bonus, __instance.transform.position + Vector3.up * __instance.m_spawnOffset, $"+1", player: true);
+                    __instance.m_bonusEffect.Create(__instance.transform.position, Quaternion.identity);
+                }
             }
         }
 
-        [HarmonyPatch(typeof(Pickable), nameof(Pickable.RPC_Pick))]
+        [HarmonyPatch(typeof(Pickable), nameof(Pickable.Interact))]
         public static void Postfix(Pickable __instance, ref int __state)
         {
-            __instance.m_amount = __state;
+            injectBonus = false;
+        }
+
+        [HarmonyPatch(typeof(ZNetView), nameof(ZNetView.InvokeRPC), new Type[] { typeof(string), typeof(object[]) })]
+        [HarmonyPrefix]
+        static void InjectBonusAmount(string method, params object[] parameters)
+        {
+            if (injectBonus && method == "RPC_Pick")
+                parameters[0] = (int)parameters[0] + 1;
         }
 
         private static readonly string[] allowedPickables = new string[]
