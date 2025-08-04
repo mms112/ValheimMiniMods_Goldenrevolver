@@ -36,7 +36,7 @@ namespace SimpleSetAndCapeBonuses
             {
                 if (SimpleSetAndCapeBonusesPlugin.ForagerSetBonusUsesRandomness.Value)
                 {
-                    __instance.m_amount += UnityEngine.Random.Range(0, 3);
+                    __instance.m_amount += UnityEngine.Random.Range(0, 2);
                 }
                 else
                 {

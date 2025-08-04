@@ -27,12 +27,12 @@ namespace SimpleSetAndCapeBonuses
     [HarmonyPatch(typeof(ObjectDB))]
     internal static class PatchObjectDB
     {
-        internal const string leatherSetBonus = "GoldensLeatherSetBonus";
-        internal const string ragsSetBonus = "GoldensRagsSetBonus";
+        internal const string leatherSetBonus = "LeatherSet";
+        internal const string ragsSetBonus = "RagSet";
         internal static int ragsSetBonusHash;
 
         private static readonly string[] ragsSet = new string[] { "HelmetMidsummerCrown", "ArmorRagsChest", "ArmorRagsLegs", };
-        private static readonly string[] leatherSet = new string[] { "HelmetLeather", "ArmorLeatherChest", "ArmorLeatherLegs" };
+        private static readonly string[] leatherSet = new string[] { "HelmetLeather", "ArmorLeatherChest", "ArmorLeatherLegs", "CapeDeerHide" };
         private static readonly string[] trollSet = new string[] { "HelmetTrollLeather", "ArmorTrollLeatherChest", "ArmorTrollLeatherLegs" };
 
         [HarmonyPatch(nameof(ObjectDB.Awake))]
@@ -120,7 +120,7 @@ namespace SimpleSetAndCapeBonuses
                     {
                         var shared = gameObject.GetComponent<ItemDrop>().m_itemData.m_shared;
 
-                        shared.m_setSize = 3;
+                        shared.m_setSize = 4;
                         shared.m_setName = leatherSetBonus;
                         shared.m_setStatusEffect = leatherSetBonusBuff;
 
