@@ -187,4 +187,22 @@ namespace ObtainableBlueMushrooms
             }
         }
     }
+
+    [HarmonyPatch(typeof(Piece), nameof(Piece.SetCreator))]
+    internal static class Piece_SetCreator_Patch
+    {
+        static void Postfix(Piece __instance)
+        {
+            if (__instance.m_name == pickableBlueMushroomPrefab.GetComponent<Piece>()?.m_name)
+            {
+                Pickable pickable = __instance.GetComponent<Pickable>();
+                if (pickable != null)
+                {
+                    // Spawn the blue mushroom as fertilized
+                    pickable.m_nview.GetZDO().Set("PickedByWinter".GetStableHashCode(), true);
+                    pickable.m_nview.GetZDO().Set("Fertilizer".GetStableHashCode(), true);
+                }
+            }
+        }
+    }
 }
