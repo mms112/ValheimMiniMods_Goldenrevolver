@@ -153,4 +153,38 @@ namespace ObtainableBlueMushrooms
             }
         }
     }
+
+    [HarmonyPatch(typeof(Pickable), nameof(Pickable.ShouldRespawn))]
+    internal static class Pickable_ShouldRespawn_Patch
+    {
+        [HarmonyPriority(Priority.HigherThanNormal)]
+        static void Prefix(Pickable __instance)
+        {
+            if (__instance.m_nview.IsOwner() && __instance.m_nview.GetZDO().GetBool("PickedByWinter".GetStableHashCode()))
+            {
+                if (__instance.GetHoverName() == pickableBlueMushroomPrefab.GetComponent<Pickable>().GetHoverName())
+                {
+                    Piece piece = __instance.GetComponent<Piece>();
+                    Collider[] collidersInBlockRadius = Physics.OverlapSphere(__instance.transform.position, piece.m_blockRadius, PlantableBlueMushroom.pieceNonSolidLayerMask);
+
+                    for (int i = 0; i < collidersInBlockRadius.Length; i++)
+                    {
+                        Piece componentInParent = collidersInBlockRadius[i].gameObject.GetComponentInParent<Piece>();
+
+                        if (componentInParent == null || componentInParent == piece)
+                        {
+                            continue;
+                        }
+
+                        // is also blue mushroom
+                        if (componentInParent.m_name == piece.m_name)
+                        {
+                            __instance.m_nview.GetZDO().Set("PickedByWinter".GetStableHashCode(), false);
+                            return;
+                        }
+                    }
+                }
+            }
+        }
+    }
 }
