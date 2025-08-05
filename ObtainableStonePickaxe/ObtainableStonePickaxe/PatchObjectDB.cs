@@ -9,7 +9,7 @@ namespace ObtainableStonePickaxe
     {
         private const string bronzePickaxe = "$item_pickaxe_bronze";
         private const string anterPickaxe = "$item_pickaxe_antler";
-        private const string stonePickaxe = "$item_pickaxe_stone";
+        internal const string stonePickaxe = "$item_pickaxe_stone";
         private const string stoneAxe = "$item_axe_stone";
 
         public static void Postfix(ObjectDB __instance)
@@ -118,14 +118,20 @@ namespace ObtainableStonePickaxe
                 if (recipe.m_item?.m_itemData.m_shared.m_name == stonePickaxe)
                 {
                     recipe.m_enabled = true;
-                    recipe.m_craftingStation = null;
+                    recipe.m_craftingStation = repairStation;
                     recipe.m_repairStation = repairStation;
+                    recipe.m_minStationLevel = 2;
 
                     // I quite like iron gate's recipe now
                     //if (craftingRecipe != null)
                     //{
                     //    recipe.m_resources = craftingRecipe;
                     //}
+                }
+
+                if (recipe.m_item?.m_itemData.m_shared.m_name == anterPickaxe)
+                {
+                    recipe.m_minStationLevel = 2;
                 }
             }
         }

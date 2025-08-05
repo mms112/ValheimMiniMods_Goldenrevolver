@@ -2,6 +2,7 @@
 using BepInEx.Configuration;
 using HarmonyLib;
 using ServerSync;
+using UnityEngine;
 using System.Reflection;
 
 namespace ObtainableStonePickaxe
@@ -66,5 +67,26 @@ namespace ObtainableStonePickaxe
         }
 
         ConfigEntry<T> config<T>(string group, string name, T defaultValue, string description, bool synchronizedSetting = true) => config(group, name, defaultValue, new ConfigDescription(description), synchronizedSetting);
+    }
+
+    [HarmonyPatch(typeof(Attack), nameof(Attack.SpawnOnHitTerrain))]
+    internal static class PatchNoDiggingGrave
+    {
+        static bool Prefix(ref GameObject __result, Vector3 hitPoint, ItemDrop.ItemData weapon)
+        {
+            if (weapon.m_shared.m_name == PatchObjectDB.stonePickaxe)
+            {
+                foreach (Location s_allLocation in Location.s_allLocations)
+                {
+                    if (s_allLocation.name.StartsWith("ShipSetting01") && s_allLocation.IsInside(hitPoint, 0f, buildCheck: true))
+                    {
+                        __result = null;
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
     }
 }
