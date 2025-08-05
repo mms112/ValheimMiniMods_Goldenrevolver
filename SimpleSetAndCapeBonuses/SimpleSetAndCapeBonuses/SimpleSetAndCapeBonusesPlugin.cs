@@ -36,10 +36,10 @@ namespace SimpleSetAndCapeBonuses
 
         private void LoadConfig()
         {
-            configLocked = config("General", "LockConfiguration", true, "Configuration is locked and can be changed by server admins only.");
+            configLocked = config("0 - General", "LockConfiguration", true, "Configuration is locked and can be changed by server admins only.");
             configSync.AddLockingConfigEntry(configLocked);
 
-            var sectionName = "0 - Requires Restart";
+            var sectionName = "1 - Requires Restart";
 
             EnableTrollArmorSetBonusChange = config(sectionName, nameof(EnableTrollArmorSetBonusChange), true, "Removes the troll cape from the Troll Set.");
             EnableLeatherArmorSetBonus = config(sectionName, nameof(EnableLeatherArmorSetBonus), true, "Enables the set bonus for the Leather Set.");
@@ -49,7 +49,7 @@ namespace SimpleSetAndCapeBonuses
             EnableSetBonusIcons = config(sectionName, nameof(EnableSetBonusIcons), true, "Enables icons for the new set boni.", false);
             AlwaysEnableMidsummerCrownRecipe = config(sectionName, nameof(AlwaysEnableMidsummerCrownRecipe), true, "Enables the midsummer crown in all seasons.");
 
-            sectionName = "1 - No Restart Required";
+            sectionName = "2 - No Restart Required";
 
             ForagerSetBonusExtraChance = config(sectionName, nameof(ForagerSetBonusExtraChance), 0.5f, "The change of Forager granting an extra item.");
         }

@@ -17,10 +17,10 @@ namespace ObtainableBlueMushrooms
 
         internal static void LoadConfig(ConfigFile configF)
         {
-            configLocked = config(configF, "General", "LockConfiguration", true, "Configuration is locked and can be changed by server admins only.");
+            configLocked = config(configF, "0 - General", "LockConfiguration", true, "Configuration is locked and can be changed by server admins only.");
             configSync.AddLockingConfigEntry(configLocked);
 
-            var sectionName = "Mushroom Planting";
+            var sectionName = "1 - Mushroom Planting";
 
             EnablePlantingInCaves = config(configF, sectionName, nameof(EnablePlantingInCaves), true, CustomSeeOnlyDisplay());
             MushroomPlantingTool = config(configF, sectionName, nameof(MushroomPlantingTool), PlantingTool.Cultivator, CustomHiddenDisplay("Whether you plant blue mushrooms with the hammer or the cultivator."));
