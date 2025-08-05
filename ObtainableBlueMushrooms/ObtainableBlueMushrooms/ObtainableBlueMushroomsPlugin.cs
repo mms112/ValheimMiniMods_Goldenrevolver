@@ -10,6 +10,7 @@ namespace ObtainableBlueMushrooms
     {
         public const string NAME = "Immersively Obtainable Blue Mushrooms";
         public const string VERSION = "1.0.3";
+        public const string GUID = "goldenrevolver.ObtainableBlueMushroomsPlugin";
 
         internal const string plantEverything = "advize.PlantEverything";
 

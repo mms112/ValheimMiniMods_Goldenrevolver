@@ -51,8 +51,6 @@ namespace ObtainableBlueMushrooms
             {
                 PlantableBlueMushroom.InitPieceAndAddToBuildPieces();
             }
-
-            FoodAndRecipeChanges.AddFoodAndRecipeChanges(__instance);
         }
     }
 }
