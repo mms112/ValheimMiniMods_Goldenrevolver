@@ -51,7 +51,7 @@ namespace SimpleSetAndCapeBonuses
 
             sectionName = "2 - No Restart Required";
 
-            ForagerSetBonusExtraChance = config(sectionName, nameof(ForagerSetBonusExtraChance), 0.5f, "The change of Forager granting an extra item.");
+            ForagerSetBonusExtraChance = config(sectionName, nameof(ForagerSetBonusExtraChance), 0.5f, "The chance of Forager granting an extra item.");
         }
 
         ConfigEntry<T> config<T>(string group, string name, T defaultValue, ConfigDescription description, bool synchronizedSetting = true)
